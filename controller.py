@@ -34,12 +34,12 @@ class Controller:
         while monitor.currentdir is None:
             time.sleep(1.0)
         journal_folder = monitor.currentdir
-        # journal_folder = os.path.join(os.path.dirname(__file__), "Test\\Data") # for rudmientary testing
+        # journal_folder = os.path.join(os.path.dirname(__file__), "Test\\Data") # for rudimentary testing
         logger.info(f"Starting to read previous journal files: {journal_folder}")
 
         logs = [f for f in os.listdir(journal_folder) if ".log" in f]  # get logs only
         logs.sort(reverse=True)
-        logs = logs[0:7]
+        logs = logs[0:7]  # Get the last 7 days
         logs.sort()
         files_with_issues = []
         for log in logs:
@@ -56,7 +56,9 @@ class Controller:
                         line_no = line_no + 1
                     except:
                         if log_file not in files_with_issues:
-                            logger.exception(f'Error parsing {log_file}, {line_no}: {line}')
+                            logger.exception(
+                                f"Error parsing {log_file}, {line_no}: {line}"
+                            )
                             files_with_issues.append(log_file)
                         break
         logger.info("Finished reading journals.")

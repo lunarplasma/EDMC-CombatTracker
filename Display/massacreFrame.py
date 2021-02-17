@@ -1,7 +1,13 @@
 import tkinter as tk
 import tkinter.font as tkFont
+import logging
 from typing import Optional, Dict, Any
 from datetime import datetime, timedelta
+
+# Logging set-up as per EDMC directive
+from common import plugin_name, appname
+
+logger = logging.getLogger(f"{appname}.{plugin_name}")
 
 
 class MassacreFrame(tk.Frame):
@@ -11,13 +17,12 @@ class MassacreFrame(tk.Frame):
 
         # Initialise the frame
         title = tk.Label(
-            self
-            , text=f'Massacre Tracker {version}'
-            , justify=tk.LEFT
-            , font=('helvetica', 12, 'underline')
+            self,
+            text=f"Massacre Tracker {version}",
+            justify=tk.LEFT,
+            font=("helvetica", 12, "underline"),
         )
         title.grid(row=0, column=0, sticky=tk.W)
-
 
         self._content = tk.Frame(self)
         self._content.grid(row=2, column=0, sticky=tk.W)
@@ -38,28 +43,24 @@ class MassacreFrame(tk.Frame):
 
     def faction_label(self, faction: str, row_no):
         label = tk.Label(
-            self._content
-            , text=faction
-            , font=('Helvetica', '10', 'italic')
+            self._content, text=faction, font=("Helvetica", "10", "italic")
         )
         label.grid(row=row_no, column=0, sticky=tk.W, columnspan=5)
         return label
 
     def data_label(self, text, row, column, sticky=tk.W):
-        label = tk.Label(
-            self._content
-            , text=text
-        )
+        label = tk.Label(self._content, text=text)
         label.grid(row=row, column=column, sticky=sticky)
         return label
 
-    def data_row(self,
-                 row,
-                 location: str,
-                 reward: str,
-                 killcount: str,
-                 time_left: str,
-                 ):
+    def data_row(
+        self,
+        row,
+        location: str,
+        reward: str,
+        killcount: str,
+        time_left: str,
+    ):
 
         labels = []
         items = [location, reward, killcount, time_left]
@@ -92,7 +93,7 @@ class MassacreFrame(tk.Frame):
             location="Location",
             reward="Reward",
             killcount="Kill Count",
-            time_left="Time Left"
+            time_left="Time Left",
         )
 
     def update_data(self, data: Dict[str, Dict[str, Any]]):
@@ -116,8 +117,7 @@ class MassacreFrame(tk.Frame):
                 # location
                 if event["event"] == "MissionRedirected":
                     obj_done = True
-                    location = \
-                        f'->{event["NewDestinationStation"]} ({event["NewDestinationSystem"]})'
+                    location = f'->{event["NewDestinationStation"]} ({event["NewDestinationSystem"]})'
                 else:
                     location = f'{event["DestinationSystem"]}'
 
@@ -134,10 +134,11 @@ class MassacreFrame(tk.Frame):
                 # expiry
                 time_left = "<Objective Complete>"
                 if obj_done is False:
-                    expiry = datetime.strptime(event["Expiry"], '%Y-%m-%dT%H:%M:%SZ')
+                    expiry = datetime.strptime(event["Expiry"], "%Y-%m-%dT%H:%M:%SZ")
                     expiry = expiry.replace(second=0)
-                    time_left_delta = expiry - datetime.now().replace(microsecond=0,
-                                                                      second=0)
+                    time_left_delta = expiry - datetime.now().replace(
+                        microsecond=0, second=0
+                    )
                     time_left = self.str_delta(time_left_delta)
 
                 row_data = self.data_row(
@@ -145,17 +146,21 @@ class MassacreFrame(tk.Frame):
                     location=location,
                     reward=reward,
                     killcount=killcount,
-                    time_left=time_left
+                    time_left=time_left,
                 )
 
                 row_no += 1
 
             # Add the killcount label
             if total_killcount > 0:
-                kill_text = f'{total_killcount}'
+                kill_text = f"{total_killcount}"
                 tk.Label(
                     self._content,
                     justify=tk.RIGHT,
                     text=kill_text,
-                    font=('Helvetica', '10', 'italic',)
+                    font=(
+                        "Helvetica",
+                        "10",
+                        "italic",
+                    ),
                 ).grid(row=title_rowno, column=5, sticky=tk.W, columnspan=3)
