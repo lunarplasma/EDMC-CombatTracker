@@ -33,8 +33,8 @@ class Controller:
         """
         while monitor.currentdir is None:
             time.sleep(1.0)
-        # journal_folder = monitor.currentdir
-        journal_folder = os.path.join(os.path.dirname(__file__), "Test\\Data") # for rudmientary testing
+        journal_folder = monitor.currentdir
+        # journal_folder = os.path.join(os.path.dirname(__file__), "Test\\Data") # for rudmientary testing
         logger.info(f"Starting to read previous journal files: {journal_folder}")
 
         logs = [f for f in os.listdir(journal_folder) if ".log" in f]  # get logs only
