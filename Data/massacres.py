@@ -55,10 +55,11 @@ class Massacres(MissionInterface):
         if faction in self._by_faction:
             ids: List[int]
             ids = self._by_faction[faction]
-            ids.remove(mission_id)
-            # Get rid of the faction if it's empty
-            if len(self._by_faction[faction]) == 0:
-                del self._by_faction[faction]
+            if mission_id in ids:
+                ids.remove(mission_id)
+                # Get rid of the faction if it's empty
+                if len(self._by_faction[faction]) == 0:
+                    del self._by_faction[faction]
 
     def __init__(self):
         """

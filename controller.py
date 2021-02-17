@@ -54,9 +54,9 @@ class Controller:
                         self.add_new_event(event, update_gui=False)
                         line = file.readline()
                         line_no = line_no + 1
-                    except Exception as err:
+                    except:
                         if log_file not in files_with_issues:
-                            print(log_file, line_no, line, type(err), err)
+                            logger.exception(f'Error parsing {log_file}, {line_no}: {line}')
                             files_with_issues.append(log_file)
                         break
         logger.info("Finished reading journals.")
