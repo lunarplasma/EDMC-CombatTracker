@@ -5,7 +5,7 @@ import os
 
 from config import appname
 
-plugin_version = "0.1.1"
+plugin_version = "0.1.2"
 # This could also be returned from plugin_start3()
 plugin_name = os.path.basename(os.path.dirname(__file__))
 
