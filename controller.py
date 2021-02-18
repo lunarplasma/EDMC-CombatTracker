@@ -10,6 +10,9 @@ import logging
 import time
 import json
 import os
+import datetime
+from datetime import timedelta
+import re
 import tkinter as tk
 
 # Logging set-up as per EDMC directive
@@ -27,6 +30,34 @@ class Controller:
 
     _event_watchers: Dict[str, List[MissionInterface]]
 
+    def _get_wanted_logs(self, logs: list):
+        """
+        Takes an array of log filenames and returns the wanted ones, based on the date of the log files.
+        """
+        wanted_logs = []
+        found_first_log = False
+
+        # Calculate a week ago
+        now = datetime.datetime.now()
+        week_ago = now - timedelta(days=7)
+
+        matcher = re.compile(r"^Journal\.(\d\d)(\d\d)(\d\d)(\d\d)")
+        logs.sort()
+        for log in logs:
+            if not found_first_log:
+                match = matcher.search(log)
+                if match:
+                    log_date = datetime.datetime(int(match.group(1))+2000, # Yucky 2 digit dates!
+                                                 int(match.group(2)),
+                                                 int(match.group(3)),
+                                                 int(match.group(4)))
+                    if log_date >= week_ago:
+                        found_first_log = True
+
+            if found_first_log:
+                wanted_logs.append(log)
+        return wanted_logs
+
     def rebuild_from_logs(self):
         """
         This will attempt to read the past seven days from the log files.
@@ -38,11 +69,10 @@ class Controller:
         logger.info(f"Starting to read previous journal files: {journal_folder}")
 
         logs = [f for f in os.listdir(journal_folder) if ".log" in f]  # get logs only
-        logs.sort(reverse=True)
-        logs = logs[0:7]  # Get the last 7 days
-        logs.sort()
+        wanted_logs = self._get_wanted_logs(logs)
+
         files_with_issues = []
-        for log in logs:
+        for log in wanted_logs:
             log_file = os.path.join(journal_folder, log)
             logger.info(f"Reading {log_file}")
             with open(log_file, "r", encoding="UTF-8") as file:
