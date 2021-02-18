@@ -111,9 +111,11 @@ class Controller:
         self.updater.start()
 
     def stop(self):
+        """Use this to stop ongoing threads. This allows for a cleaner shutdown."""
         self.alive = False
 
     def refresh_massacre_thread(self):
+        """This regularly refreshes the massacre frame"""
         sleep_time = 0.5
         wait_time = 60
         wait_count = wait_time / sleep_time
