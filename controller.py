@@ -10,6 +10,9 @@ import logging
 import time
 import json
 import os
+import datetime
+from datetime import timedelta
+import re
 import tkinter as tk
 
 # Logging set-up as per EDMC directive
@@ -38,11 +41,23 @@ class Controller:
         logger.info(f"Starting to read previous journal files: {journal_folder}")
 
         logs = [f for f in os.listdir(journal_folder) if ".log" in f]  # get logs only
-        logs.sort(reverse=True)
-        logs = logs[0:7]  # Get the last 7 days
-        logs.sort()
-        files_with_issues = []
+
+        # Calculate a week ago, as a regex
+        now = datetime.datetime.now()
+        week_ago = now - timedelta(days=7)
+        week_ago_regex = week_ago.strftime('\.%y%m%d')
+
+        # Then build an array with the wanted logs
+        wanted_logs = []
+        found_first_log = False
         for log in logs:
+            logger.info(f"Checking {log} with {week_ago_regex}")
+            if found_first_log or re.search(week_ago_regex, log):
+                found_first_log = True
+                wanted_logs.append(log)
+
+        files_with_issues = []
+        for log in wanted_logs:
             log_file = os.path.join(journal_folder, log)
             logger.info(f"Reading {log_file}")
             with open(log_file, "r", encoding="UTF-8") as file:
