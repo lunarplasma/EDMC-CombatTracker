@@ -42,18 +42,25 @@ class Controller:
 
         logs = [f for f in os.listdir(journal_folder) if ".log" in f]  # get logs only
 
-        # Calculate a week ago, as a regex
+        # Calculate a week ago
         now = datetime.datetime.now()
         week_ago = now - timedelta(days=7)
-        week_ago_regex = week_ago.strftime('\.%y%m%d')
 
         # Then build an array with the wanted logs
         wanted_logs = []
         found_first_log = False
         for log in logs:
-            logger.info(f"Checking {log} with {week_ago_regex}")
-            if found_first_log or re.search(week_ago_regex, log):
-                found_first_log = True
+            if not found_first_log:
+              match = re.search(r"^Journal\.(\d\d)(\d\d)(\d\d)(\d\d)", log)
+              if match:
+                  log_date = datetime.datetime(int(match.group(1))+2000, # Yucky 2 digit dates!
+                                               int(match.group(2)),
+                                               int(match.group(3)),
+                                               int(match.group(4)))
+                  if log_date >= week_ago:
+                      found_first_log = True
+
+            if found_first_log:
                 wanted_logs.append(log)
 
         files_with_issues = []
