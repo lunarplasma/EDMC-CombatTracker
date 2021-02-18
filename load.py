@@ -1,16 +1,27 @@
 from typing import Dict, Any
 import tkinter as tk
-from common import plugin_name, plugin_version
+import logging
+from common import plugin_name, plugin_version, logger_name
 
 from controller import Controller
 
-controller = Controller()  # singleton
+# Logging set-up as per EDMC directive
+from common import logger_name
+
+logger = logging.getLogger(logger_name)
+
+controller = None
 
 
-def plugin_start3(plugin_dir: str) -> str:
+def plugin_start3(plugin_dir: str = None) -> str:
     """
     Load this plugin into EDMC
     """
+    logger.info("Plugin start.")
+
+    global controller
+    controller = Controller()
+
     return plugin_name
 
 
@@ -20,16 +31,17 @@ def plugin_app(parent: tk.Frame) -> tk.Frame:
     :param parent:
     :return:
     """
+    logger.info("Plugin app.")
     return controller.register_frame(version=plugin_version, parent=parent)
 
 
 def journal_entry(
-    cmdr: str,
-    is_beta: bool,
-    system: str,
-    station: str,
-    entry: Dict[str, Any],
-    state: Dict[str, Any],
+        cmdr: str,
+        is_beta: bool,
+        system: str,
+        station: str,
+        entry: Dict[str, Any],
+        state: Dict[str, Any],
 ) -> None:
     """
     EDMC hook which occurs when a new event is detected.

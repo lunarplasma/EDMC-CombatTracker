@@ -5,9 +5,8 @@ from typing import Optional, Dict, Any
 from datetime import datetime, timedelta
 
 # Logging set-up as per EDMC directive
-from common import plugin_name, appname
-
-logger = logging.getLogger(f"{appname}.{plugin_name}")
+from common import logger_name
+logger = logging.getLogger(logger_name)
 
 
 class MassacreFrame(tk.Frame):

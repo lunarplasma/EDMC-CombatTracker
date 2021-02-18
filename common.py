@@ -2,7 +2,7 @@ import os
 import logging
 from config import appname
 
-plugin_version = "0.2.0"
+plugin_version = "0.3.0"
 
 # This could also be returned from plugin_start3()
 plugin_name = os.path.basename(os.path.dirname(__file__))
@@ -11,7 +11,8 @@ plugin_name = os.path.basename(os.path.dirname(__file__))
 # folder name in the logging output format.
 # NB: plugin_name here *must* be the plugin's folder name as per the preceding
 #     code, else the logger won't be properly set up.
-logger = logging.getLogger(f"{appname}.{plugin_name}.{plugin_version}")
+logger_name = f"{appname}.{plugin_name}"
+logger = logging.getLogger(logger_name)
 
 # If the Logger has handlers then it was already set up by the core code, else
 # it needs setting up here.

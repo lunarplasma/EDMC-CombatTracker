@@ -4,9 +4,8 @@ from collections import OrderedDict
 from .missionInterface import MissionInterface
 
 # Logging set-up as per EDMC directive
-from common import plugin_name, appname
-
-logger = logging.getLogger(f"{appname}.{plugin_name}")
+from common import logger_name
+logger = logging.getLogger(logger_name)
 
 
 class Massacres(MissionInterface):
@@ -74,7 +73,7 @@ class Massacres(MissionInterface):
         _by_faction: Dict[str, Set[int]]  # mission_id grouped by faction
         self._by_faction = OrderedDict()
 
-        logger.info("Massacre mission tracker initialised")
+        logger.debug("Massacre mission tracker initialised")
 
     def grouped_by_faction(self) -> Dict[str, List[Dict]]:
         """
