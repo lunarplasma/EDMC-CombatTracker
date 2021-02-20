@@ -3,7 +3,7 @@ from typing import Dict, List
 from monitor import (
     monitor,
 )  # imports from the EDMarketConnector. Is used to obtain the logs folder.
-import threading
+
 from Data import MissionInterface, Massacres
 from Display.massacreFrame import MassacreFrame
 import logging
@@ -13,7 +13,7 @@ import os
 from datetime import timedelta, datetime
 import re
 import tkinter as tk
-from common import appname, plugin_name
+
 
 # Logging set-up as per EDMC directive
 from common import logger_name
@@ -76,8 +76,6 @@ class Controller:
         """
         This will attempt to read the past seven days from the log files.
         """
-        while self.get_journal_folder() is None:
-            time.sleep(1.0)
         journal_folder = self.get_journal_folder()
         logger.info(f"Starting to read previous journal files: {journal_folder}")
 
@@ -107,6 +105,7 @@ class Controller:
                         break
         logger.info("Finished reading journals.")
         self.update_massacre_display()
+        self._logs_scanned = True
 
     def __init__(self):
         """
@@ -118,36 +117,15 @@ class Controller:
         self.massacre_frame = None  # initialise with register_frame
         self._event_watchers = {}  # key: event name, value: List(DataInterface)
         self._massacre_tracker = Massacres()
-        self._lock = threading.Lock()
 
-        self.alive = True
-        self.updater = threading.Thread(target=self.refresh_massacre_thread)
-        self.updater.start()
+        self._logs_scanned = False  # flag to indicate that the logs have been scanned
 
         logger.debug("Combat controller initialised")
 
-    def load_data_logs(self):
-        """Starts the thread that loads data from existing logs"""
-        threading.Thread(target=self.rebuild_from_logs).start()
-
-    def stop(self):
-        """Use this to stop ongoing threads. This allows for a cleaner shutdown."""
-        self.alive = False
-
-    def refresh_massacre_thread(self):
-        """This regularly refreshes the massacre frame"""
-        sleep_time = 0.5
-        wait_time = 60
-        wait_count = wait_time / sleep_time
-        incrementer = 0
-        while self.alive is True:
-            incrementer += 1
-            if incrementer > wait_count:
-                logger.info("Refreshing display")
-                self.update_massacre_display()
-                incrementer = 0
-            else:
-                time.sleep(sleep_time)
+    @property
+    def logs_scanned(self):
+        """Flag indicating whether the initial startup scan has been done yet or not."""
+        return self._logs_scanned
 
     def register_frame(self, version, parent=tk.Frame):
         """Registers the parent frame and initialises the tracker panels"""
@@ -170,12 +148,15 @@ class Controller:
 
     def update_massacre_display(self):
         """Updates the massacre display frame"""
-        with self._lock:
-            massacre_data = self._massacre_tracker.grouped_by_faction()
-            if massacre_data:
-                while not self.massacre_frame:
-                    pass
-                self.massacre_frame.update_data(massacre_data)
+        massacre_data = self._massacre_tracker.grouped_by_faction()
+        if massacre_data:
+            while not self.massacre_frame:
+                pass
+            self.massacre_frame.update_data(massacre_data)
+
+    def stop(self):
+        """Shutdown the controller"""
+        pass
 
 
 # Here, we can set this up to use an environment variable

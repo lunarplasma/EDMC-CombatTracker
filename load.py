@@ -22,7 +22,6 @@ def plugin_start3(plugin_dir: str = None) -> str:
 
     global controller
     controller = Controller()
-    controller.load_data_logs()
 
     return plugin_name
 
@@ -55,6 +54,9 @@ def journal_entry(
     :param state:
     :return:
     """
+    if controller.logs_scanned is False:
+        controller.rebuild_from_logs()
+
     controller.add_new_event(entry)
 
 
