@@ -2,6 +2,8 @@
 
 This is a plugin for the [E:D Market Connector (EDMC)](https://github.com/EDCD/EDMarketConnector/wiki). Its purpose is to make tracking of combat missions easier. 
    
+   ![Screenshot](Docs/sample.png)  
+   
 ## Installation
 
 Unzip the release zip into the EDMC plugins* directory. Restart EDMC to find the plugin.
