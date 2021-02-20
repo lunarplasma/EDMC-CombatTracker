@@ -17,6 +17,7 @@ from common import appname, plugin_name
 
 # Logging set-up as per EDMC directive
 from common import logger_name
+
 logger = logging.getLogger(logger_name)
 
 
@@ -34,10 +35,9 @@ class Controller:
         return monitor.currentdir
 
     @staticmethod
-    def filter_logs_by_date(logs: List[str],
-                            start_date: datetime,
-                            end_date: datetime = datetime.now()
-                            ) -> List[str]:
+    def filter_logs_by_date(
+        logs: List[str], start_date: datetime, end_date: datetime = datetime.now()
+    ) -> List[str]:
         """
         Parses log filenames and returns those whose parsed date are
         within the specified dates (inclusive).
@@ -48,21 +48,24 @@ class Controller:
         """
         assert start_date < end_date, "start_date must come before end_date"
         wanted_logs = []
-        matcher = re.compile(r"^Journal\."
-                             r"(?P<YY>\d\d)"
-                             r"(?P<MM>\d\d)"
-                             r"(?P<DD>\d\d)"
-                             r"(?P<hh>\d\d)"
-                             r"(?P<mm>\d\d)"
-                             r"(?P<ss>\d\d)")
+        matcher = re.compile(
+            r"^Journal\."
+            r"(?P<YY>\d\d)"
+            r"(?P<MM>\d\d)"
+            r"(?P<DD>\d\d)"
+            r"(?P<hh>\d\d)"
+            r"(?P<mm>\d\d)"
+            r"(?P<ss>\d\d)"
+        )
         for log in logs:
             match = matcher.search(log)
             if match:
                 # Note - these are all 2 digits, including the year
-                log_date = datetime(year=int(match.group('YY')) + 2000,
-                                    month=int(match.group('MM')),
-                                    day=int(match.group('DD')),
-                                    )
+                log_date = datetime(
+                    year=int(match.group("YY")) + 2000,
+                    month=int(match.group("MM")),
+                    day=int(match.group("DD")),
+                )
 
                 if start_date <= log_date <= end_date:
                     wanted_logs.append(log)
@@ -111,7 +114,7 @@ class Controller:
         """
         # launch a thread that will wait for `monitor` to be ready,
         # then launch use the reader to get the latest relevant lines of mission data.
-        threading.Thread(target=self.rebuild_from_logs).start()
+
         self.massacre_frame = None  # initialise with register_frame
         self._event_watchers = {}  # key: event name, value: List(DataInterface)
         self._massacre_tracker = Massacres()
@@ -122,6 +125,10 @@ class Controller:
         self.updater.start()
 
         logger.debug("Combat controller initialised")
+
+    def load_data_logs(self):
+        """Starts the thread that loads data from existing logs"""
+        threading.Thread(target=self.rebuild_from_logs).start()
 
     def stop(self):
         """Use this to stop ongoing threads. This allows for a cleaner shutdown."""
@@ -165,4 +172,21 @@ class Controller:
         """Updates the massacre display frame"""
         with self._lock:
             massacre_data = self._massacre_tracker.grouped_by_faction()
-            self.massacre_frame.update_data(massacre_data)
+            if massacre_data:
+                while not self.massacre_frame:
+                    pass
+                self.massacre_frame.update_data(massacre_data)
+
+
+# Here, we can set this up to use an environment variable
+# to replace the journal folder location. We'll update the Controller
+# to use all the files from that directory.
+test_folder = os.getenv("PLUGIN_TEST_FOLDER")
+if test_folder:
+    target_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), test_folder)
+
+    def return_files(obj, files, *args, **kwargs):
+        return files
+
+    Controller.filter_logs_by_date = return_files
+    Controller.get_journal_folder = lambda *args: target_path

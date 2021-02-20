@@ -10,6 +10,7 @@ from common import logger_name
 
 logger = logging.getLogger(logger_name)
 
+# The global controller singleton
 controller = None
 
 
@@ -21,6 +22,7 @@ def plugin_start3(plugin_dir: str = None) -> str:
 
     global controller
     controller = Controller()
+    controller.load_data_logs()
 
     return plugin_name
 
@@ -36,12 +38,12 @@ def plugin_app(parent: tk.Frame) -> tk.Frame:
 
 
 def journal_entry(
-        cmdr: str,
-        is_beta: bool,
-        system: str,
-        station: str,
-        entry: Dict[str, Any],
-        state: Dict[str, Any],
+    cmdr: str,
+    is_beta: bool,
+    system: str,
+    station: str,
+    entry: Dict[str, Any],
+    state: Dict[str, Any],
 ) -> None:
     """
     EDMC hook which occurs when a new event is detected.
