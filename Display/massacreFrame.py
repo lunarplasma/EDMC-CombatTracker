@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 
 # Logging set-up as per EDMC directive
 from common import logger_name
+
 logger = logging.getLogger(logger_name)
 
 
@@ -58,11 +59,11 @@ class MassacreFrame(tk.Frame):
         location: str,
         reward: str,
         killcount: str,
-        time_left: str,
+        expiry: str,
     ):
 
         labels = []
-        items = [location, reward, killcount, time_left]
+        items = [location, reward, killcount, expiry]
         column = 0
 
         for item in items:
@@ -76,7 +77,7 @@ class MassacreFrame(tk.Frame):
             "location": labels[0],
             "reward": labels[1],
             "killcount": labels[2],
-            "time_left": labels[3],
+            "expiry": labels[3],
         }
 
         return row_data
@@ -92,7 +93,7 @@ class MassacreFrame(tk.Frame):
             location="Location",
             reward="Reward",
             killcount="Kill Count",
-            time_left="Time Left",
+            expiry="Expiry",
         )
 
     def update_data(self, data: Dict[str, Dict[str, Any]]):
@@ -132,6 +133,7 @@ class MassacreFrame(tk.Frame):
 
                 # expiry
                 time_left = "<Objective Complete>"
+                expiry = "<Objective Complete>"
                 if obj_done is False:
                     expiry = datetime.strptime(event["Expiry"], "%Y-%m-%dT%H:%M:%SZ")
                     expiry = expiry.replace(second=0)
@@ -145,7 +147,7 @@ class MassacreFrame(tk.Frame):
                     location=location,
                     reward=reward,
                     killcount=killcount,
-                    time_left=time_left,
+                    expiry=expiry,
                 )
 
                 row_no += 1
