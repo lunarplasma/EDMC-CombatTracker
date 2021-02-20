@@ -1,8 +1,9 @@
 import tkinter as tk
-import tkinter.font as tkFont
 import logging
 from typing import Optional, Dict, Any
 from datetime import datetime, timedelta
+
+from theme import theme
 
 # Logging set-up as per EDMC directive
 from common import logger_name
@@ -24,7 +25,7 @@ class MassacreFrame(tk.Frame):
         )
         title.grid(row=0, column=0, sticky=tk.W)
 
-        self._content = tk.Frame(self)
+        self._content = tk.Frame(self, **kw)
         self._content.grid(row=2, column=0, sticky=tk.W)
         self._content.grid_columnconfigure(0, minsize=15)
         self._row_data = {}  # key by mission_id
@@ -165,3 +166,5 @@ class MassacreFrame(tk.Frame):
                         "italic",
                     ),
                 ).grid(row=title_rowno, column=5, sticky=tk.W, columnspan=3)
+
+        theme.update(self._content)
