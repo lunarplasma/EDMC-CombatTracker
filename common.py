@@ -28,3 +28,4 @@ if not logger.hasHandlers():
     logger_formatter.default_msec_format = "%s.%03d"
     logger_channel.setFormatter(logger_formatter)
     logger.addHandler(logger_channel)
+

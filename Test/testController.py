@@ -100,13 +100,12 @@ class TestController(unittest.TestCase):
         start_date = datetime(year=2020, month=12, day=29)
         end_date = datetime(year=2021, month=1, day=4)
 
-        results = Controller.filter_logs_by_date(logs,
-                                                 start_date=start_date,
-                                                 end_date=end_date
-                                                 )
+        results = Controller.filter_logs_by_date(
+            logs, start_date=start_date, end_date=end_date
+        )
 
         self.assertListEqual(expected_logs, results)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
