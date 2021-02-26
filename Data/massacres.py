@@ -5,6 +5,7 @@ from .missionInterface import MissionInterface
 
 # Logging set-up as per EDMC directive
 from common import logger_name
+
 logger = logging.getLogger(logger_name)
 
 
@@ -20,8 +21,15 @@ class Massacres(MissionInterface):
 
         if "Accepted" in mission_event:
             self._add_to_factions(faction=event["Faction"], mission_id=mission_id)
-        elif "Completed" in mission_event or "Abandoned" in mission_event:
+        elif (
+            "Completed" in mission_event
+            or "Abandoned" in mission_event
+            or "Failed" in mission_event
+        ):
             # move the mission to the completed pile
+            logger.info(
+                f"Marking mission {mission_id} as done. Reason: {mission_event}"
+            )
             self._completed[mission_id] = massacre
             del self._massacres[mission_id]
             if "Faction" in massacre:
