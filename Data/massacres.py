@@ -32,7 +32,7 @@ class Massacres(MissionInterface):
             )
             self._completed[mission_id] = massacre
             del self._massacres[mission_id]
-            if "Faction" in massacre:
+            if "Faction" in massacre:  # some events do not have a "Faction" key
                 self._remove_from_factions(
                     faction=massacre["Faction"], mission_id=mission_id
                 )
@@ -41,14 +41,18 @@ class Massacres(MissionInterface):
         # Get the massacre based on the ID, or store it.
 
         if mission_id not in self._massacres:
+            logger.info(f"Adding mission: {mission_id} ({new_massacre['event']})")
             self._massacres[mission_id] = new_massacre
         else:
+            logger.info(f"Updating mission: {mission_id} ({new_massacre['event']})")
             self._massacres[mission_id]["event"] = new_massacre["event"]
             self._massacres[mission_id].update(new_massacre)
         return self._massacres[mission_id]
 
     def _add_to_factions(self, faction, mission_id):
         """Adds this mission id to the factions list"""
+        if faction not in self._by_faction:
+            logger.info(f"Adding faction to massacre lists: {faction}")
         by_faction = self._by_faction.setdefault(faction, [])
         by_faction.append(mission_id)
 
@@ -64,6 +68,7 @@ class Massacres(MissionInterface):
                 ids.remove(mission_id)
                 # Get rid of the faction if it's empty
                 if len(self._by_faction[faction]) == 0:
+                    logger.info(f"Deleting faction from massacre lists: {faction}")
                     del self._by_faction[faction]
 
     def __init__(self):
