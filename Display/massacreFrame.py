@@ -98,6 +98,7 @@ class MassacreFrame(tk.Frame):
         )
 
     def update_data(self, data: Dict[str, Dict[str, Any]]):
+        logger.info("Updating.")
         factions = data.keys()
 
         # if self._factions != factions:
