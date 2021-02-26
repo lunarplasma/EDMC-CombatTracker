@@ -2,7 +2,7 @@ import os
 import logging
 from config import appname
 
-plugin_version = "0.3.0"
+plugin_version = "0.4.1"
 
 # This could also be returned from plugin_start3()
 plugin_name = os.path.basename(os.path.dirname(__file__))
@@ -28,4 +28,3 @@ if not logger.hasHandlers():
     logger_formatter.default_msec_format = "%s.%03d"
     logger_channel.setFormatter(logger_formatter)
     logger.addHandler(logger_channel)
-
