@@ -167,7 +167,7 @@ class Controller:
                 self._massacre_tracker.add_event(event=new_event)
                 if update_gui:
                     self.update_massacre_display()
-        elif event_name == "ShipTargeted":
+        elif event_name == "ShipTargeted" and update_gui:
             self.target_frame.update_data(new_event)
 
     def update_massacre_display(self):

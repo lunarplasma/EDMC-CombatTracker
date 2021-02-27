@@ -89,7 +89,8 @@ class TargetFrame(tk.Frame):
             if scan_stage > 1:
                 pass
             if scan_stage > 2:
-                self._faction.config(text=data["Faction"])
+                if "Faction" in data:
+                    self._faction.config(text=data["Faction"])
                 self._update_wanted(data["LegalStatus"])
                 if "Bounty" in data:
                     bounty = f"{data['Bounty']:,d} cr"
