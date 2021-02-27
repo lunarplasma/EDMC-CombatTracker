@@ -3,7 +3,7 @@ import logging
 from config import appname
 from dataclasses import dataclass
 
-plugin_version = "0.5.0"
+plugin_version = "0.5.1"
 
 # This could also be returned from plugin_start3()
 plugin_name = os.path.basename(os.path.dirname(__file__))
