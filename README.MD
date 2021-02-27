@@ -1,6 +1,10 @@
 # EDMC-CombatTracker
 
-This is a plugin for the [E:D Market Connector (EDMC)](https://github.com/EDCD/EDMarketConnector/wiki). Its purpose is to make tracking of combat missions easier. 
+This is a plugin for the [E:D Market Connector (EDMC)](https://github.com/EDCD/EDMarketConnector/wiki). 
+
+The Target Ship panel displays information on the currently-targeted ship, including their bounty (normally reachable in the contacts side-panel).
+
+The Massacre Tracker panel displays current Massacre missions. Its purpose is to make tracking of these missions easier. 
    
    ![Screenshot](Docs/sample.png)  
    
@@ -11,7 +15,7 @@ Unzip the release zip into the EDMC plugins* directory. Restart EDMC to find the
 \* You can find the plugins directory in EDMC Settings -> plugins tab. directory.  
 
 
-## Usage
+## Massacre Tracker Notes
 
 Massacre missions are grouped by faction, and their total required kill count is displayed alongside the faction name.
 

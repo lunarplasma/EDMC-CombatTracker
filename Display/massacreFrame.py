@@ -6,22 +6,22 @@ from datetime import datetime, timedelta
 from theme import theme
 
 # Logging set-up as per EDMC directive
-from common import logger_name
+from common import logger_name, Fonts
 
 logger = logging.getLogger(logger_name)
 
 
 class MassacreFrame(tk.Frame):
-    def __init__(self, parent, version, **kw):
+    def __init__(self, parent, **kw):
         """Create this frame"""
         super().__init__(parent, **kw)
 
         # Initialise the frame
         title = tk.Label(
             self,
-            text=f"Massacre Tracker {version}",
+            text=f"Massacre Tracker",
             justify=tk.LEFT,
-            font=("helvetica", 12, "underline"),
+            font=Fonts.Title,
         )
         title.grid(row=0, column=0, sticky=tk.W)
 

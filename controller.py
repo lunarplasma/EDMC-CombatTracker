@@ -5,7 +5,7 @@ from monitor import (
 )  # imports from the EDMarketConnector. Is used to obtain the logs folder.
 
 from Data import MissionInterface, Massacres
-from Display.massacreFrame import MassacreFrame
+from Display import MassacreFrame, TargetFrame
 import logging
 import time
 import json
@@ -13,7 +13,9 @@ import os
 from datetime import timedelta, datetime
 import re
 import tkinter as tk
-
+import tkinter.ttk as ttk
+from theme import theme
+from prefs import AutoInc
 
 # Logging set-up as per EDMC directive
 from common import logger_name
@@ -114,6 +116,8 @@ class Controller:
         # launch a thread that will wait for `monitor` to be ready,
         # then launch use the reader to get the latest relevant lines of mission data.
 
+        self.master_frame = None
+        self.target_frame = None
         self.massacre_frame = None  # initialise with register_frame
         self._event_watchers = {}  # key: event name, value: List(DataInterface)
         self._massacre_tracker = Massacres()
@@ -129,8 +133,26 @@ class Controller:
 
     def register_frame(self, version, parent=tk.Frame):
         """Registers the parent frame and initialises the tracker panels"""
-        self.massacre_frame = MassacreFrame(parent, version=version)
-        return self.massacre_frame
+        row = AutoInc()
+        self.master_frame = tk.Frame(parent)
+        self.target_frame = TargetFrame(self.master_frame)
+        self.target_frame.grid(row=row.get(), sticky=tk.W)
+        tk.Frame(self.master_frame, highlightthickness=1).grid(
+            row=row.get(), column=0, columnspan=2, sticky=tk.EW
+        )  # separator
+        self.massacre_frame = MassacreFrame(self.master_frame)
+        self.massacre_frame.grid(row=row.get(), sticky=tk.W)
+        tk.Label(
+            self.master_frame,
+            text=f"Version: {version}",
+            font=("Helvetica", "8", "italic"),
+        ).grid(
+            row=0,
+            column=1,
+            sticky=tk.NE,
+        )
+
+        return self.master_frame
 
     def add_new_event(self, new_event: dict, update_gui: bool = True) -> None:
         """
@@ -145,6 +167,8 @@ class Controller:
                 self._massacre_tracker.add_event(event=new_event)
                 if update_gui:
                     self.update_massacre_display()
+        elif event_name == "ShipTargeted":
+            self.target_frame.update_data(new_event)
 
     def update_massacre_display(self):
         """Updates the massacre display frame"""
