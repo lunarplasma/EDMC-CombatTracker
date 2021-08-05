@@ -177,6 +177,8 @@ class Controller:
             while not self.massacre_frame:
                 pass
             self.massacre_frame.update_data(massacre_data)
+        else:
+            self.massacre_frame.clear_content()
 
     def stop(self):
         """Shutdown the controller"""
