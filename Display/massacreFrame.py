@@ -38,8 +38,11 @@ class MassacreFrame(tk.Frame):
         minutes, _ = divmod(remainder, 60)
         result = ""
         if days > 0:
-            result = f"{days} days,"
-        result += f"{hours} hours, {minutes} minutes"
+            result = f"{days}d"
+        elif hours > 0:
+          result += f"{hours}hr"
+        elif minutes > 0:
+          result += f"{minutes}m"
         return result
 
     def faction_label(self, faction: str, row_no):
@@ -149,7 +152,8 @@ class MassacreFrame(tk.Frame):
                     location=location,
                     reward=reward,
                     killcount=killcount,
-                    expiry=expiry,
+#                    expiry=expiry,
+                    expiry=time_left,
                 )
 
                 row_no += 1
